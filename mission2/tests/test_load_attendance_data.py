@@ -1,21 +1,20 @@
 import pytest
-import app
-from app.attendance import main, print_member_info, get_remove_member, update_member_grade, add_bonus_score, \
+from mission2.app.attendance import main, print_member_info, get_remove_member, update_member_grade, add_bonus_score, \
     find_student, Student, load_attendance_data, add_attendance_data, Normal, Silver, Gold, StudentRegistry
 
 
 def test_main_calls_pipeline_in_order(mocker):
     calls = []
 
-    mocker.patch("app.attendance.load_attendance_data",
+    mocker.patch("mission2.app.attendance.load_attendance_data",
                            side_effect=lambda: calls.append("load"))
-    mocker.patch("app.attendance.add_bonus_score",
+    mocker.patch("mission2.app.attendance.add_bonus_score",
                            side_effect=lambda: calls.append("bonus"))
-    mocker.patch("app.attendance.update_member_grade",
+    mocker.patch("mission2.app.attendance.update_member_grade",
                            side_effect=lambda: calls.append("grade"))
-    mocker.patch("app.attendance.print_member_info",
+    mocker.patch("mission2.app.attendance.print_member_info",
                            side_effect=lambda: calls.append("print"))
-    mocker.patch("app.attendance.get_remove_member",
+    mocker.patch("mission2.app.attendance.get_remove_member",
                            side_effect=lambda: calls.append("remove"))
 
     main()
@@ -28,7 +27,7 @@ def test_load_attendace_data(mocker):
     mock_data = "Alice Mon\nBob Tue\n"
     mocker.patch("builtins.open", mocker.mock_open(read_data=mock_data))
 
-    mock_add = mocker.patch("app.attendance.add_attendance_data")
+    mock_add = mocker.patch("mission2.app.attendance.add_attendance_data")
 
     load_attendance_data()
 
@@ -40,7 +39,7 @@ def test_load_attendance_data_invalid_line(mocker):
     # 잘못된 데이터 (공백 없는 라인)
     mock_data = "InvalidLine\n"
     mocker.patch("builtins.open", mocker.mock_open(read_data=mock_data))
-    mocker.patch("app.attendance.add_attendance_data")
+    mocker.patch("mission2.app.attendance.add_attendance_data")
 
     with pytest.raises(ValueError, match="Invalid input format"):
         load_attendance_data()
