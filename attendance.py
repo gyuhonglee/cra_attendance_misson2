@@ -1,3 +1,5 @@
+from dataclasses import dataclass, field
+
 id1 = {}
 id_cnt = 0
 
@@ -8,6 +10,20 @@ grade = [0] * 100
 names = [''] * 100
 wed = [0] * 100
 weeken = [0] * 100
+
+
+
+@dataclass
+class Student:
+    name: str
+    grade : str
+    total_score: int = 0
+    attendance: dict = field(default_factory=dict)
+
+students: list[Student] = []
+
+def add_attendance_data(name, day_of_week):
+    pass
 
 def load_attendance_data():
     pass
