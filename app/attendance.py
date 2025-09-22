@@ -15,6 +15,7 @@ class Silver(Grade):
 class Gold(Grade):
     def name(self): return "GOLD"
 
+
 @dataclass
 class Student:
     name: str
@@ -22,13 +23,41 @@ class Student:
     total_score: int = 0
     attendance: dict = field(default_factory=dict)
 
-students: list[Student] = []
+class Singleton(type):
+    _instances = {}
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super().__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+class StudentRegistry(metaclass=Singleton):
+    def __init__(self):
+        self._items: list[Student] = []
+
+    # 리스트 유틸
+    def add(self, s: Student) -> None:
+        self._items.append(s)
+
+    def all(self) -> list[Student]:
+        return list(self._items)  # 복사본 반환(외부 변형 방지용)
+
+    def find(self, name: str) -> Student | None:
+        return next((x for x in self._items if x.name == name), None)
+
+# --- 사용 예 ---
+repo = StudentRegistry()
+repo.add(Student(name="Alice"))
+repo2 = StudentRegistry()
+assert repo is repo2  # 같은 인스턴스!
+
 
 def print_member_info():
+    students = StudentRegistry().all()
     for student in students:
         print(f"NAME : {student.name}, POINT : {student.total_score}, GRADE : {student.grade.name()}")
 
 def get_remove_member():
+    students = StudentRegistry().all()
     print("\nRemoved player")
     print("==============")
     for student in students:
@@ -37,6 +66,7 @@ def get_remove_member():
             print(student.name)
 
 def update_member_grade():
+    students = StudentRegistry().all()
     for student in students:
         if student.total_score >= 50:
             student.grade = Gold()
@@ -44,6 +74,7 @@ def update_member_grade():
             student.grade = Silver()
 
 def add_bonus_score():
+    students = StudentRegistry().all()
     for student in students:
         if student.attendance.get("wednesday", 0)>= 10:
             student.total_score += 10
@@ -51,16 +82,17 @@ def add_bonus_score():
             student.total_score += 10
 
 def find_student(name):
+    students = StudentRegistry().all()
     for student in students:
         if student.name == name:
             return student
     return None
 
 def add_attendance_data(name, day_of_week):
-    student = find_student(name)
+    student = StudentRegistry().find(name)
     if not student:
-        student = Student(name=name, total_score=0, grade=Normal(), attendance={})
-        students.append(student)
+        student = Student(name=name,grade=Normal(), total_score=0, attendance={})
+        StudentRegistry().add(student)
 
     student.total_score += 1
     if day_of_week == "wednesday":
