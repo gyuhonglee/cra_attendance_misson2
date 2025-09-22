@@ -9,6 +9,9 @@ names = [''] * 100
 wed = [0] * 100
 weeken = [0] * 100
 
+def load_attendance_data():
+    pass
+
 def input2(w, wk):
     global id_cnt
 
