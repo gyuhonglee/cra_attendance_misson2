@@ -23,7 +23,11 @@ class Student:
 students: list[Student] = []
 
 def add_bonus_score():
-    pass
+    for student in students:
+        if student.attendance.get("wednesday", 0)>= 10:
+            student.total_score += 10
+        if student.attendance.get("sunday", 0) + student.attendance.get("saturday", 0) >= 10:
+            student.total_score += 10
 
 def find_student(name):
     for student in students:
