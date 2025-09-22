@@ -1,9 +1,24 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+
+class Grade(ABC):
+    @abstractmethod
+    def name(self) -> str:
+        ...
+
+class Normal(Grade):
+    def name(self): return "NORMAL"
+
+class Silver(Grade):
+    def name(self): return "SILVER"
+
+class Gold(Grade):
+    def name(self): return "GOLD"
 
 @dataclass
 class Student:
     name: str
-    grade : str
+    grade: Grade = field(default_factory=Normal)
     total_score: int = 0
     attendance: dict = field(default_factory=dict)
 
@@ -11,22 +26,22 @@ students: list[Student] = []
 
 def print_member_info():
     for student in students:
-        print(f"NAME : {student.name}, POINT : {student.total_score}, GRADE : {student.grade}")
+        print(f"NAME : {student.name}, POINT : {student.total_score}, GRADE : {student.grade.name()}")
 
 def get_remove_member():
     print("\nRemoved player")
     print("==============")
     for student in students:
-        if student.grade == 'NORMAL' and student.attendance.get("wednesday", 0) == 0 \
+        if student.grade.name() == 'NORMAL' and student.attendance.get("wednesday", 0) == 0 \
                 and student.attendance.get("sunday", 0) + student.attendance.get("saturday", 0) == 0:
             print(student.name)
 
 def update_member_grade():
     for student in students:
         if student.total_score >= 50:
-            student.grade = "GOLD"
+            student.grade = Gold()
         elif student.total_score >= 30:
-            student.grade = "SILVER"
+            student.grade = Silver()
 
 def add_bonus_score():
     for student in students:
@@ -44,7 +59,7 @@ def find_student(name):
 def add_attendance_data(name, day_of_week):
     student = find_student(name)
     if not student:
-        student = Student(name=name, total_score=0, grade="NORMAL", attendance={})
+        student = Student(name=name, total_score=0, grade=Normal(), attendance={})
         students.append(student)
 
     student.total_score += 1
