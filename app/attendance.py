@@ -23,7 +23,11 @@ class Student:
 students: list[Student] = []
 
 def update_member_grade():
-    pass
+    for student in students:
+        if student.total_score >= 50:
+            student.grade = "GOLD"
+        elif student.total_score >= 30:
+            student.grade = "SILVER"
 
 def add_bonus_score():
     for student in students:
