@@ -1,8 +1,6 @@
 import pytest
 import app
 from app.attendance import add_bonus_score, find_student, Student, load_attendance_data, add_attendance_data
-import sys, os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 def test_load_attendace_data(mocker):
     mock_data = "Alice Mon\nBob Tue\n"
