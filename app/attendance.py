@@ -22,6 +22,9 @@ class Student:
 
 students: list[Student] = []
 
+def update_member_grade():
+    pass
+
 def add_bonus_score():
     for student in students:
         if student.attendance.get("wednesday", 0)>= 10:

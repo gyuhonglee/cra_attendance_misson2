@@ -1,6 +1,6 @@
 import pytest
 import app
-from app.attendance import add_bonus_score, find_student, Student, load_attendance_data, add_attendance_data
+from app.attendance import update_member_grade, add_bonus_score, find_student, Student, load_attendance_data, add_attendance_data
 
 def test_load_attendace_data(mocker):
     mock_data = "Alice Mon\nBob Tue\n"
@@ -125,3 +125,29 @@ def test_add_bonus_score_no_bonus(mocker):
     add_bonus_score()
 
     assert s.total_score == 30  # 보너스 없음
+
+def test_update_member_grade_gold(mocker):
+    s = Student(name="Alice", total_score=55, grade="NORMAL", attendance={})
+    mocker.patch("app.attendance.students", [s])
+
+    update_member_grade()
+
+    assert s.grade == "GOLD"
+
+
+def test_update_member_grade_silver(mocker):
+    s = Student(name="Bob", total_score=35, grade="NORMAL", attendance={})
+    mocker.patch("app.attendance.students", [s])
+
+    update_member_grade()
+
+    assert s.grade == "SILVER"
+
+
+def test_update_member_grade_normal(mocker):
+    s = Student(name="Charlie", total_score=20, grade="NORMAL", attendance={})
+    mocker.patch("app.attendance.students", [s])
+
+    update_member_grade()
+
+    assert s.grade == "NORMAL"  # 바뀌지 않음
