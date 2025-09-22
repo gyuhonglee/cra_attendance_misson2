@@ -1,6 +1,26 @@
 import pytest
 import app
-from app.attendance import print_member_info, get_remove_member, update_member_grade, add_bonus_score, find_student, Student, load_attendance_data, add_attendance_data
+from app.attendance import main, print_member_info, get_remove_member, update_member_grade, add_bonus_score, find_student, Student, load_attendance_data, add_attendance_data
+
+def test_main_calls_pipeline_in_order(mocker):
+    calls = []
+
+    mocker.patch("app.attendance.load_attendance_data",
+                           side_effect=lambda: calls.append("load"))
+    mocker.patch("app.attendance.add_bonus_score",
+                           side_effect=lambda: calls.append("bonus"))
+    mocker.patch("app.attendance.update_member_grade",
+                           side_effect=lambda: calls.append("grade"))
+    mocker.patch("app.attendance.print_member_info",
+                           side_effect=lambda: calls.append("print"))
+    mocker.patch("app.attendance.get_remove_member",
+                           side_effect=lambda: calls.append("remove"))
+
+    main()
+
+    # 호출 순서까지 보장
+    assert calls == ["load", "bonus", "grade", "print", "remove"]
+
 
 def test_load_attendace_data(mocker):
     mock_data = "Alice Mon\nBob Tue\n"
