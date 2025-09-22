@@ -1,6 +1,6 @@
 import pytest
 import app
-from app.attendance import update_member_grade, add_bonus_score, find_student, Student, load_attendance_data, add_attendance_data
+from app.attendance import print_member_info, get_remove_member, update_member_grade, add_bonus_score, find_student, Student, load_attendance_data, add_attendance_data
 
 def test_load_attendace_data(mocker):
     mock_data = "Alice Mon\nBob Tue\n"
@@ -151,3 +151,37 @@ def test_update_member_grade_normal(mocker):
     update_member_grade()
 
     assert s.grade == "NORMAL"  # 바뀌지 않음
+
+def test_print_member_info(mocker, capsys):
+    s1 = Student(name="Alice", total_score=40, grade="SILVER", attendance={})
+    s2 = Student(name="Bob", total_score=60, grade="GOLD", attendance={})
+    mocker.patch("app.attendance.students", [s1, s2])
+
+    print_member_info()
+    captured = capsys.readouterr()
+
+    # 두 학생의 출력이 포함되어야 함
+    assert "NAME : Alice, POINT : 40, GRADE : SILVER" in captured.out
+    assert "NAME : Bob, POINT : 60, GRADE : GOLD" in captured.out
+
+def test_get_remove_member_removes_correct_student(mocker, capsys):
+    # Alice는 NORMAL + 수요일 0 + 주말 0 → 제거 대상
+    s1 = Student(name="Alice", total_score=10, grade="NORMAL", attendance={})
+    # Bob은 SILVER → 제거 대상 아님
+    s2 = Student(name="Bob", total_score=40, grade="SILVER", attendance={"wednesday": 0})
+    # Carol은 NORMAL이지만 일요일 출석 있음 → 제거 대상 아님
+    s3 = Student(name="Carol", total_score=5, grade="NORMAL", attendance={"sunday": 2})
+
+    mocker.patch("app.attendance.students", [s1, s2, s3])
+
+    get_remove_member()
+    captured = capsys.readouterr()
+
+    # 헤더 출력 확인
+    assert "Removed player" in captured.out
+    assert "==============" in captured.out
+
+    # Alice만 출력되어야 함
+    assert "Alice" in captured.out
+    assert "Bob" not in captured.out
+    assert "Carol" not in captured.out

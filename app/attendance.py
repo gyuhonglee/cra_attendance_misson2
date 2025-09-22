@@ -22,6 +22,18 @@ class Student:
 
 students: list[Student] = []
 
+def print_member_info():
+    for student in students:
+        print(f"NAME : {student.name}, POINT : {student.total_score}, GRADE : {student.grade}")
+
+def get_remove_member():
+    print("\nRemoved player")
+    print("==============")
+    for student in students:
+        if student.grade == 'NORMAL' and student.attendance.get("wednesday", 0) == 0 \
+                and student.attendance.get("sunday", 0) + student.attendance.get("saturday", 0) == 0:
+            print(student.name)
+
 def update_member_grade():
     for student in students:
         if student.total_score >= 50:
