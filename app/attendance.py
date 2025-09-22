@@ -22,6 +22,9 @@ class Student:
 
 students: list[Student] = []
 
+def add_bonus_score():
+    pass
+
 def find_student(name):
     for student in students:
         if student.name == name:

@@ -1,6 +1,6 @@
 import pytest
 import app
-from app.attendance import find_student, Student, load_attendance_data, add_attendance_data
+from app.attendance import add_bonus_score, find_student, Student, load_attendance_data, add_attendance_data
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -101,3 +101,29 @@ def test_find_student_not_found(mocker):
 
     result = find_student("Charlie")
     assert result is None
+
+def test_add_bonus_score_wednesday_bonus(mocker):
+    s = Student(name="Alice", total_score=50, grade="NORMAL", attendance={"wednesday": 10})
+    mocker.patch("app.attendance.students", [s])
+
+    add_bonus_score()
+
+    assert s.total_score == 60  # +10 보너스
+
+
+def test_add_bonus_score_weekend_bonus(mocker):
+    s = Student(name="Bob", total_score=70, grade="NORMAL", attendance={"saturday": 6, "sunday": 5})
+    mocker.patch("app.attendance.students", [s])
+
+    add_bonus_score()
+
+    assert s.total_score == 80  # +10 보너스
+
+
+def test_add_bonus_score_no_bonus(mocker):
+    s = Student(name="Charlie", total_score=30, grade="NORMAL", attendance={"wednesday": 5, "saturday": 4, "sunday": 3})
+    mocker.patch("app.attendance.students", [s])
+
+    add_bonus_score()
+
+    assert s.total_score == 30  # 보너스 없음
