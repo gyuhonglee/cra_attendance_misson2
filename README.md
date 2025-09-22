@@ -1,2 +1,7 @@
-# cra_attendance_misson2
-cra_attendance_misson2
+| 요구사항 체크 | O / X |
+|----------|------|
+| D1       | X    |
+| D2       | X    |
+| D3       | X    |
+| D4       | X    |
+| D5       | X    |
